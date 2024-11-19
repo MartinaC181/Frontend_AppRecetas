@@ -3,6 +3,7 @@
 import useFetch from "@/hooks/useFetchRecipe";
 import Autoplay from 'embla-carousel-autoplay'
 import * as React from "react"
+import Image from 'next/image'
 
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -43,9 +44,16 @@ export default function DataCarousel(){
                 <div className="p-1">
                   <Card className="shadow-lg rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
                     <CardContent className="p-4">
-                      <img src={recipe.image} alt={recipe.title} className="w-full h-48 object-cover mb-4" />
-                      <h2 className="text-xl font-bold mb-2">{recipe.title}</h2>
-                      <p className="text-gray-700">{recipe.description}</p>
+                      <Image 
+                        src={recipe.image} 
+                        alt={recipe.title} 
+                        width={500}
+                        height={300}
+                        className="w-full h-48 object-cover mb-4 rounded-lg" 
+                        onError={(e: { currentTarget: { src: string; }; }) => { e.currentTarget.src = ''; }} 
+                      />
+                      <h2 className="text-gray-950 text-xl font-bold mb-2 text-center">{recipe.title}</h2>
+                      <p className="text-gray-700 text-justify">{recipe.description}</p>
                     </CardContent>
                   </Card>
                 </div>
