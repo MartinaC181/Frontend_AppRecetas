@@ -14,9 +14,6 @@ export default function HomePage() {
                         <img src="https://content.clara.es/medio/2021/02/11/100-recetas-saludables-con-5-ingredientes-pescado_819c7ea7_1280x720.jpg" alt="Image next to form" className="w-full h-full rounded-lg shadow-lg object-cover" />
                     </div>
                 </div>
-                <div className="flex flex-col md:flex-row justify-center items-center">
-                    <CardWithForm />
-                </div>
             </div>
         </div>
     );

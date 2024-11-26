@@ -1,7 +1,7 @@
 
 
 export interface IRecipe {
-    id: string | undefined;
+    id: string | undefined | ObjectId;
     title: string;
     description: string;
     ingredients: string[];
