@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Inter } from "next/font/google";
 import Footer from "@/components/footer";
+import Navbar from "@/components/navbar/navbar";
+import Chatbot from "@/components/chatbot/Chatbot"; // Importamos el Chatbot
 import { ThemeProvider } from "@/components/dark-mode/theme-provider";
 
 const geistSans = localFont({
@@ -15,9 +18,11 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
-  title: "Recipe App",
-  description: "",
+  title: "Mi Aplicación de Recetas",
+  description: "Una aplicación para gestionar tus recetas favoritas",
 };
 
 export default function RootLayout({
@@ -26,18 +31,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased`}
       >
         <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange> 
-          {children}
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* Navbar visible en todas las páginas */}
+          <Navbar />
+
+          {/* Contenido principal de la página */}
+          <div>{children}</div>
+
+          {/* Chatbot flotante en todas las páginas */}
+          <Chatbot /> {/* Este chatbot será visible en todas las páginas */}
+
         </ThemeProvider>
 
+        {/* Footer en todas las páginas */}
         <Footer />
       </body>
     </html>
