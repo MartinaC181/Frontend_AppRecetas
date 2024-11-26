@@ -1,16 +1,17 @@
 import Link from "next/link";
+import { ModeToggle } from "../dark-mode/buttomTheme";
 
 const navItems = [
     {
-        name: "Home",
+        label: "Home",
         route: "/home",
     },
     {
-        name: "categories",
+        label: "categories",
         route: "/category",
     },
     {
-        name: "Recipes",
+        label: "Recipes",
         route: "/recipe",
     },
 ]
@@ -18,14 +19,25 @@ const navItems = [
 
 export default function Navbar() {
     return (
-        <nav className="flex justify-center py-2 gap-4 items-center bg-slate-600 w-full ">
-            {navItems.map((item) => {
-                return (
-                    <Link key={item.name} href={item.route} className="w-100px rounded-md at-8 p-0 m-2 hover:underline">
-                        {item.name}
-                    </Link>
-                );
-            })}         
+        <nav className="w-full flex justify-center items-center p-4 bg-slate-600">
+            <div className="flex justify-between items-center w-[1200px]">
+                <div className="flex flex-grow justify-center gap-4">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.label}
+                            href={item.route}
+                            className="text-xl w-100px rounded-md at-8 p-0 m-2 hover:underline"
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="relative">
+                    <ModeToggle />
+                </div>
+            </div>
         </nav>
     );
 }
+

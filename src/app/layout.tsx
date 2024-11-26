@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col w-full`}
       >
         <ThemeProvider
           attribute="class"
