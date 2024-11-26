@@ -21,7 +21,7 @@ export default function NavbarInicio() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="https://github.com/MartinaC181" target="_blank">Contact</BreadcrumbLink>
+                        <BreadcrumbLink href="" target="_blank">Contact</BreadcrumbLink>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
