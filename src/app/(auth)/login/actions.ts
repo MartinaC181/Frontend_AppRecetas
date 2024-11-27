@@ -15,7 +15,7 @@ export async function handleLogin(formData: FormData) {
   const user = { email, password };
 
   try {
-    const request = await fetch("http://localhost:4000/api/users/login", {
+    const request = await fetch(process.env.NEXT_PUBLIC_API_USER + "/login", {
       body: JSON.stringify(user),
       method: "POST",
       headers: {
