@@ -24,8 +24,8 @@ export async function POST(req: Request) {
 
     // Conecta a MongoDB
     const mongoClient = await clientPromise;
-    const db = mongoClient.db("test"); // Cambia por el nombre de tu base de datos
-    const recetasCollection = db.collection("recipes"); // Cambia por el nombre de tu colección
+    const db = mongoClient.db("tu_base_de_datos"); // Cambia por el nombre de tu base de datos
+    const recetasCollection = db.collection("recetas"); // Cambia por el nombre de tu colección
 
     // Procesa el mensaje con Wit.ai
     const witResponse = await client.message(body.message, {});
