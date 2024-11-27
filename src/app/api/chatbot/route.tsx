@@ -1,12 +1,11 @@
-// src/app/api/chatbot/route.tsx
-import { NextResponse } from 'next/server';
-import { Wit } from 'node-wit';
+import { NextResponse } from "next/server";
+import { Wit } from "node-wit";
 import clientPromise from "@/lib/mongodb"; // Importa la conexión a MongoDB
 
 // Configura Wit.ai
 const accessToken = process.env.WITAI_SERVER_ACCESS_TOKEN;
 if (!accessToken) {
-  throw new Error('WITAI_SERVER_ACCESS_TOKEN no está definido');
+  throw new Error("WITAI_SERVER_ACCESS_TOKEN no está definido");
 }
 const client = new Wit({ accessToken });
 
@@ -15,17 +14,27 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Valida el mensaje del usuario
-    if (!body.message || typeof body.message !== 'string') {
+    if (!body.message || typeof body.message !== "string") {
       return NextResponse.json(
-        { error: 'El mensaje es requerido y debe ser un string' },
+        { error: "El mensaje es requerido y debe ser un string" },
         { status: 400 }
       );
     }
 
-    // Conecta a MongoDB
-    const mongoClient = await clientPromise;
-    const db = mongoClient.db("tu_base_de_datos"); // Cambia por el nombre de tu base de datos
-    const recetasCollection = db.collection("recetas"); // Cambia por el nombre de tu colección
+    // Conecta a MongoDB con manejo de errores
+    let mongoClient;
+    try {
+      console.log("Intentando conectar con MongoDB...");
+      mongoClient = await clientPromise;
+      console.log("Conexión exitosa a MongoDB");
+    } catch (mongoError) {
+      console.error("Error conectando a MongoDB:", mongoError);
+      console.log("Revisando URI:", process.env.DB_URI);
+      throw new Error("Error conectando a la base de datos. Verifica tu URI y red.");
+    }
+
+    const db = mongoClient.db("test"); // Base de datos
+    const recetasCollection = db.collection("recipes"); // Colección
 
     // Procesa el mensaje con Wit.ai
     const witResponse = await client.message(body.message, {});
