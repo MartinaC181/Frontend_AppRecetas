@@ -27,8 +27,13 @@
     "next": "15.0.2",
     "next-themes": "^0.4.3",
     "node-wit": "^6.6.0",
+<<<<<<< HEAD
     "react": "18",
     "react-dom": "18",
+=======
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+>>>>>>> 9495120fe63373e834a50abe1429d644711ec67a
     "react-hook-form": "^7.53.2",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
