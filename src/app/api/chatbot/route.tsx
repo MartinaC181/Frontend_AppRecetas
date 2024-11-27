@@ -1,32 +1,20 @@
 // src/app/api/chatbot/route.tsx
 import { NextResponse } from 'next/server';
 import { Wit } from 'node-wit';
+import clientPromise from "@/lib/mongodb"; // Importa la conexión a MongoDB
 
-// Verifica que el token de acceso está definido en las variables de entorno
+// Configura Wit.ai
 const accessToken = process.env.WITAI_SERVER_ACCESS_TOKEN;
-console.log("Token de Wit.ai:", accessToken); // Verifica en la terminal si aparece correctamente
-
 if (!accessToken) {
-  throw new Error('WITAI_SERVER_ACCESS_TOKEN is not defined');
+  throw new Error('WITAI_SERVER_ACCESS_TOKEN no está definido');
 }
+const client = new Wit({ accessToken });
 
-// Configura el cliente de Wit.ai
-const client = new Wit({
-  accessToken,
-});
-
-// Define el tipo de la solicitud que se espera
-interface ChatbotRequest {
-  message: string;
-}
-
-// Define el manejador para solicitudes POST
 export async function POST(req: Request) {
   try {
-    // Parsea el cuerpo de la solicitud y tipifica la estructura esperada
-    const body: ChatbotRequest = await req.json();
+    const body = await req.json();
 
-    // Asegúrate de que el mensaje exista
+    // Valida el mensaje del usuario
     if (!body.message || typeof body.message !== 'string') {
       return NextResponse.json(
         { error: 'El mensaje es requerido y debe ser un string' },
@@ -34,16 +22,70 @@ export async function POST(req: Request) {
       );
     }
 
-    // Envía el mensaje a Wit.ai
-    const response = await client.message(body.message, {});
-    const { intents, entities, text } = response;
+    // Conecta a MongoDB
+    const mongoClient = await clientPromise;
+    const db = mongoClient.db("test"); // Cambia por el nombre de tu base de datos
+    const recetasCollection = db.collection("recipes"); // Cambia por el nombre de tu colección
 
-    // Devuelve la respuesta procesada
-    return NextResponse.json({ intents, entities, text });
+    // Procesa el mensaje con Wit.ai
+    const witResponse = await client.message(body.message, {});
+    console.log("Respuesta de Wit.ai:", JSON.stringify(witResponse, null, 2));
+
+    const { intents, entities } = witResponse;
+
+    // Identifica la intención principal
+    const intent = intents[0]?.name || "unknown";
+    let reply;
+
+    switch (intent) {
+      case "find_recipe":
+        const receta = await recetasCollection.findOne({ title: new RegExp(body.message, "i") });
+        if (receta) {
+          reply = `Encontré esta receta: ${receta.title}. Descripción: ${receta.description}.`;
+        } else {
+          reply = "Lo siento, no encontré una receta con ese nombre.";
+        }
+        break;
+
+      case "get_recipe_by_ingredient":
+        const ingrediente = entities.ingredient?.[0]?.value;
+        if (ingrediente) {
+          const recetas = await recetasCollection
+            .find({ ingredients: { $regex: new RegExp(ingrediente, "i") } })
+            .toArray();
+          if (recetas.length > 0) {
+            const nombresRecetas = recetas.map((r) => r.title).join(", ");
+            reply = `Recetas con ${ingrediente}: ${nombresRecetas}.`;
+          } else {
+            reply = `No encontré recetas con el ingrediente: ${ingrediente}.`;
+          }
+        } else {
+          reply = "Por favor, dime un ingrediente para buscar recetas.";
+        }
+        break;
+
+      case "greet":
+        reply = "¡Hola! ¿En qué puedo ayudarte?";
+        break;
+
+      case "thank_you":
+        reply = "¡De nada! Estoy aquí para ayudarte.";
+        break;
+
+      case "goodbye":
+        reply = "¡Hasta luego! Que tengas un buen día.";
+        break;
+
+      default:
+        reply = "Lo siento, no entendí tu mensaje. ¿Puedes intentarlo de nuevo?";
+    }
+
+    // Devuelve la respuesta generada
+    return NextResponse.json({ reply });
   } catch (error) {
-    console.error('Error al procesar el mensaje:', error);
+    console.error("Error al procesar el mensaje:", error);
     return NextResponse.json(
-      { error: 'Error al procesar el mensaje.' },
+      { error: "Hubo un error interno. Por favor, intenta de nuevo más tarde." },
       { status: 500 }
     );
   }
