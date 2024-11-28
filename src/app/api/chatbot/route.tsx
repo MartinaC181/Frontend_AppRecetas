@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Wit } from "node-wit";
-import clientPromise from "@/lib/mongodb"; // Importa la conexión a MongoDB
+import clientPromise from "@/lib/mongodb";
 
 // Configura Wit.ai
 const accessToken = process.env.WITAI_SERVER_ACCESS_TOKEN;
@@ -12,8 +12,6 @@ const client = new Wit({ accessToken });
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
-    // Valida el mensaje del usuario
     if (!body.message || typeof body.message !== "string") {
       return NextResponse.json(
         { error: "El mensaje es requerido y debe ser un string" },
@@ -21,58 +19,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // Conecta a MongoDB con manejo de errores
-    let mongoClient;
-    try {
-      console.log("Intentando conectar con MongoDB...");
-      mongoClient = await clientPromise;
-      console.log("Conexión exitosa a MongoDB");
-    } catch (mongoError) {
-      console.error("Error conectando a MongoDB:", mongoError);
-      console.log("Revisando URI:", process.env.DB_URI);
-      throw new Error("Error conectando a la base de datos. Verifica tu URI y red.");
-    }
+    const mongoClient = await clientPromise;
+    const db = mongoClient.db("test");
+    const recetasCollection = db.collection("recipes");
 
-    const db = mongoClient.db("test"); // Base de datos
-    const recetasCollection = db.collection("recipes"); // Colección
-
-    // Procesa el mensaje con Wit.ai
     const witResponse = await client.message(body.message, {});
     console.log("Respuesta de Wit.ai:", JSON.stringify(witResponse, null, 2));
 
-    const { intents, entities } = witResponse;
+    const intents = witResponse.entities?.intent || [];
+    const recipeEntities = witResponse.entities?.recipe || [];
+    const ingredientEntities = witResponse.entities?.ingredient || [];
+    const intent = intents.length > 0 ? intents[0].value : "unknown";
 
-    // Identifica la intención principal
-    const intent = intents[0]?.name || "unknown";
     let reply;
 
     switch (intent) {
-      case "find_recipe":
-        const receta = await recetasCollection.findOne({ title: new RegExp(body.message, "i") });
-        if (receta) {
-          reply = `Encontré esta receta: ${receta.title}. Descripción: ${receta.description}.`;
-        } else {
-          reply = "Lo siento, no encontré una receta con ese nombre.";
-        }
-        break;
-
-      case "get_recipe_by_ingredient":
-        const ingrediente = entities.ingredient?.[0]?.value;
-        if (ingrediente) {
-          const recetas = await recetasCollection
-            .find({ ingredients: { $regex: new RegExp(ingrediente, "i") } })
-            .toArray();
-          if (recetas.length > 0) {
-            const nombresRecetas = recetas.map((r) => r.title).join(", ");
-            reply = `Recetas con ${ingrediente}: ${nombresRecetas}.`;
-          } else {
-            reply = `No encontré recetas con el ingrediente: ${ingrediente}.`;
-          }
-        } else {
-          reply = "Por favor, dime un ingrediente para buscar recetas.";
-        }
-        break;
-
       case "greet":
         reply = "¡Hola! ¿En qué puedo ayudarte?";
         break;
@@ -85,11 +46,73 @@ export async function POST(req: Request) {
         reply = "¡Hasta luego! Que tengas un buen día.";
         break;
 
+      case "find_recipe":
+        if (recipeEntities.length > 0) {
+          const recipeName = recipeEntities[0]?.value;
+          const receta = await recetasCollection.findOne({ title: new RegExp(recipeName, "i") });
+          if (receta) {
+            reply = `Encontré esta receta: ${receta.title}. Descripción: ${receta.description}.`;
+          } else {
+            reply = "Lo siento, no encontré una receta con ese nombre.";
+          }
+        } else {
+          reply = "Por favor, dime el nombre de la receta que buscas.";
+        }
+        break;
+
+      case "get_recipe_by_ingredient":
+        if (ingredientEntities.length > 0) {
+          const ingredient = ingredientEntities[0]?.value;
+          const recetas = await recetasCollection
+            .find({ ingredients: { $regex: new RegExp(ingredient, "i") } })
+            .toArray();
+          if (recetas.length > 0) {
+            const recipeTitles = recetas.map((receta) => receta.title).join(", ");
+            reply = `Recetas con ${ingredient}: ${recipeTitles}.`;
+          } else {
+            reply = `No encontré recetas con el ingrediente: ${ingredient}.`;
+          }
+        } else {
+          reply = "Por favor, dime un ingrediente para buscar recetas.";
+        }
+        break;
+
+      case "get_recipe_description":
+        if (recipeEntities.length > 0) {
+          const recipeName = recipeEntities[0]?.value;
+          const receta = await recetasCollection.findOne({ title: new RegExp(recipeName, "i") });
+          if (receta) {
+            reply = `Descripción de ${receta.title}: ${receta.description}.`;
+          } else {
+            reply = "Lo siento, no encontré la descripción de esa receta.";
+          }
+        } else {
+          reply = "Por favor, dime el nombre de la receta para obtener su descripción.";
+        }
+        break;
+
+      case "get_recipe_steps":
+        if (recipeEntities.length > 0) {
+          const recipeName = recipeEntities[0]?.value;
+          const receta = await recetasCollection.findOne({ title: new RegExp(recipeName, "i") });
+          if (receta) {
+            reply = `Pasos para ${receta.title}: ${receta.steps.join(", ")}.`;
+          } else {
+            reply = "Lo siento, no encontré los pasos para esa receta.";
+          }
+        } else {
+          reply = "Por favor, dime el nombre de la receta para obtener sus pasos.";
+        }
+        break;
+
+      case "ask_help":
+        reply = "Claro, estoy aquí para ayudarte. ¿Qué necesitas?";
+        break;
+
       default:
         reply = "Lo siento, no entendí tu mensaje. ¿Puedes intentarlo de nuevo?";
     }
 
-    // Devuelve la respuesta generada
     return NextResponse.json({ reply });
   } catch (error) {
     console.error("Error al procesar el mensaje:", error);

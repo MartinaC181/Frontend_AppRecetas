@@ -1,38 +1,31 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
-const uri = process.env.DB_URI || ""; // Obtén la URI de tu base de datos desde .env.local
-const options = {
-  tlsAllowInvalidCertificates: true, // Solo para desarrollo local
-};
+const uri = "mongodb+srv://MartinaC:CKZw4BpIptcTWkfG@app.ennqa.mongodb.net/?retryWrites=true&w=majority&appName=App";
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
-if (!uri) {
-  throw new Error("Por favor, agrega tu DB_URI en .env.local");
-}
-
-declare global {
-  var _mongoClientPromise: Promise<MongoClient> | undefined;
-}
-
-if (process.env.NODE_ENV === "development") {
-  // En desarrollo, usa un cliente global para evitar crear múltiples conexiones
-  if (!global._mongoClientPromise) {
-    console.log("Conectando a MongoDB en desarrollo...");
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  // En producción, crea un nuevo cliente para cada conexión
-  console.log("Conectando a MongoDB en producción...");
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+});
+
+const clientPromise = client.connect();
+
+async function run() {
+  try {
+    // Connect the client to the server (optional starting in v4.7)
+    await clientPromise;
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
 }
 
-clientPromise
-  .then(() => console.log("Conexión exitosa a MongoDB"))
-  .catch((err) => console.error("Error conectando a MongoDB:", err));
+run().catch(console.dir);
 
 export default clientPromise;
