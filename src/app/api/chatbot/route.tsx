@@ -105,10 +105,6 @@ export async function POST(req: Request) {
         }
         break;
 
-      case "ask_help":
-        reply = "Claro, estoy aquí para ayudarte. ¿Qué necesitas?";
-        break;
-
       default:
         reply = "Lo siento, no entendí tu mensaje. ¿Puedes intentarlo de nuevo?";
     }
