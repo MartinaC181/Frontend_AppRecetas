@@ -15,12 +15,12 @@ export default function CardWithForm() {
     const data = {
       title: formData.get('title'),
       description: formData.get('description'),
-      image: formData.get('url'),
+      Image: formData.get('url'),
       ingredients: (formData.get('ingredients') as string).split(','),
       steps: (formData.get('steps') as string).split(','),
     };
 
-    if (!data.title || !data.description || !data.image || !data.ingredients.length || !data.steps.length) {
+    if (!data.title || !data.description || !data.Image || !data.ingredients.length || !data.steps.length) {
       toast.error('Todos los campos son obligatorios.');
       return;
     }
