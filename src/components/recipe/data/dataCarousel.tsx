@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import useFetch from "@/hooks/useFetchRecipe";
 import Autoplay from 'embla-carousel-autoplay'
 import * as React from "react"
-import Image from 'next/image'
 
 import { Card, CardContent } from "@/components/ui/card"
 import {
