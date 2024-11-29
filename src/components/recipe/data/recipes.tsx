@@ -24,7 +24,7 @@ export default function DataRecipe(){
                 <div key={`${recipe._id}-${index}`} className="w-80 h-80 bg-white shadow-lg rounded-lg overflow-hidden m-4"
                 onClick={() => recipe._id && handleClick(recipe._id)}
                 >
-                    <img className="w-full h-56 object-cover object-center" src={recipe.image} alt="recipe" />
+                    <img className="w-full h-56 object-cover object-center" src={recipe.Image} alt="recipe" />
                     <div className="flex items-center justify-between px-2 py-2 bg-gray-800">
                         <h1 className="text-white font-bold text-xl">{recipe.title}</h1>
                     </div>
