@@ -19,7 +19,7 @@ export default function OneRecipe({ id }: { id: string }) {
         <div className="flex flex-wrap gap-4 mt-20 justify-center">
             <div key={recipe._id} className="w-full max-w-md p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">{recipe.title}</h1>
-                <img className="w-full h-64 object-cover rounded-md mb-4" src={recipe.image} alt={recipe.title} />
+                <img className="w-full h-64 object-cover rounded-md mb-4" src={recipe.Image} alt={recipe.title} />
                 <p className="text-lg text-gray-600 mb-2">{recipe.description}</p>
                 <h2 className="text-xl font-semibold text-gray-700 mb-2">Ingredientes:</h2>
                 <ul className="list-disc list-inside text-gray-600 mb-4">
