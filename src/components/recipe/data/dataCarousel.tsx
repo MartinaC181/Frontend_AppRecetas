@@ -22,7 +22,7 @@ export default function DataCarousel(){
         Autoplay({ delay: 2000, stopOnInteraction: true })
     )
     
-    const { data, loading, error } = useFetch("http://localhost:5000/api/recipe");
+    const { data, loading, error } = useFetch(process.env.NEXT_PUBLIC_API_RECIPE as string);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -44,11 +44,9 @@ export default function DataCarousel(){
                 <div className="p-1">
                   <Card className="shadow-lg rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
                     <CardContent className="p-4">
-                      <Image 
+                      <img 
                         src={recipe.image} 
                         alt={recipe.title} 
-                        width={500}
-                        height={300}
                         className="w-full h-48 object-cover mb-4 rounded-lg" 
                         onError={(e: { currentTarget: { src: string; }; }) => { e.currentTarget.src = ''; }} 
                       />

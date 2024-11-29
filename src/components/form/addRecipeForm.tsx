@@ -4,10 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardDescription, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-
-import { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -22,6 +19,12 @@ export default function CardWithForm() {
       ingredients: (formData.get('ingredients') as string).split(','),
       steps: (formData.get('steps') as string).split(','),
     };
+
+    if (!data.title || !data.description || !data.image || !data.ingredients.length || !data.steps.length) {
+      toast.error('Todos los campos son obligatorios.');
+      return;
+    }
+
     fetch(process.env.NEXT_PUBLIC_API_RECIPE as string + "/create", {
       method: 'POST',
       headers: {

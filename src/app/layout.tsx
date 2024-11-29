@@ -3,9 +3,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Footer from "@/components/footer";
-import Navbar from "@/components/navbar/navbar";
 import Chatbot from "@/components/chatbot/Chatbot"; // Importamos el Chatbot
 import { ThemeProvider } from "@/components/dark-mode/theme-provider";
+import { ModeToggle } from "@/components/dark-mode/buttomTheme";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,6 +41,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <div className="absolute top-4 right-4">
+            <ModeToggle />
+          </div>
           {/* Contenido principal de la página */}
           <div>{children}</div>
 

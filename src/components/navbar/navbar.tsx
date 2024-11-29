@@ -28,10 +28,6 @@ export default function Navbar() {
                         </Link>
                     ))}
                 </div>
-
-                <div className="relative">
-                    <ModeToggle />
-                </div>
             </div>
         </nav>
     );
