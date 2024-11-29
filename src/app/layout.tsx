@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Inter } from "next/font/google";
 import Footer from "@/components/footer";
 import Chatbot from "@/components/chatbot/Chatbot"; // Importamos el Chatbot
 import { ThemeProvider } from "@/components/dark-mode/theme-provider";
@@ -17,8 +16,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Mi Aplicación de Recetas",

@@ -1,10 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import useFetch from "@/hooks/useFetchRecipe";
 import { IRecipe } from "@/interfaces";
 import { useRouter } from "next/navigation";
-
-
 
 export default function DataRecipe(){
     const router = useRouter();
