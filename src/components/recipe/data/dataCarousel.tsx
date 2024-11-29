@@ -46,7 +46,7 @@ export default function DataCarousel(){
                   <Card className="shadow-lg rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
                     <CardContent className="p-4">
                       <img 
-                        src={recipe.image} 
+                        src={recipe.Image} 
                         alt={recipe.title} 
                         className="w-full h-48 object-cover mb-4 rounded-lg" 
                         onError={(e: { currentTarget: { src: string; }; }) => { e.currentTarget.src = ''; }} 
