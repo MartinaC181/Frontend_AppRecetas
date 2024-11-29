@@ -7,10 +7,6 @@ const navItems = [
         route: "/home",
     },
     {
-        label: "categories",
-        route: "/category",
-    },
-    {
         label: "Recipes",
         route: "/recipe",
     },

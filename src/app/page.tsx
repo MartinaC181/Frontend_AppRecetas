@@ -1,6 +1,5 @@
-import { ModeToggle } from '@/components/dark-mode/buttomTheme';
+
 import Dashboard from '../components/dashboard/dashboard';
-import NavbarInicio from '@/components/navbar/navbarInicio';
 import { LoginButton } from '@/components/button/loginButton';
 
 export default function Home() {
@@ -11,9 +10,6 @@ export default function Home() {
       </div>
       <div className="flex flex-col items-center justify-center p-10">
         <Dashboard />
-      </div>
-      <div className="flex justify-end w-full">
-        <ModeToggle />
       </div>
     </div>
   );
