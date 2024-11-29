@@ -6,7 +6,7 @@ export interface IRecipe {
     description: string;
     ingredients: string[];
     steps: string[];
-    image: string;
+    Image: string;
     createdAt: string;
 }
 
@@ -16,7 +16,7 @@ export interface RecipeProps {
     description: string;
     ingredients: string[];
     steps: string[];
-    image: string;
+    Image: string;
 }
 
 export interface RecipeListProps {
